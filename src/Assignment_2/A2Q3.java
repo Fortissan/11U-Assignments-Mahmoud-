@@ -21,7 +21,7 @@ public class A2Q3 {
         // TODO code application logic here
 
         City Meme = new City();
-        Robot Karel = new Robot(Meme, 54, 62, Direction.EAST);
+        Robot Karel = new Robot(Meme, 9, 7, Direction.EAST);
 
         while (Karel.getStreet() != 0) {
             if (Karel.getDirection() == Direction.NORTH) {
