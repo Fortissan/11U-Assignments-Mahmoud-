@@ -47,12 +47,17 @@ public class Quiz1 {
         new Thing(meme, 1, 5);
         new Thing(meme, 1, 6);
 
+        //Teach the robot to move forward if it can.
         while (Karel.frontIsClear()) {
             Karel.move();
+            
+            //Get the robot to pick up what they find in the mine.
             if (Karel.canPickThing()) {
                 Karel.pickThing();
                 Karel.turnLeft();
                 Karel.turnLeft();
+                
+                //Get Karel to put the debris back outside of the mine.
                 while (Karel.getAvenue() != 0) {
                     Karel.move();
                 }
@@ -64,17 +69,15 @@ public class Quiz1 {
                 }
             }
         }
+        //Get Karel out of the mine once finished.
         while (!Karel.frontIsClear()) {
             Karel.turnLeft();
             Karel.turnLeft();
-             while(Karel.frontIsClear()) {
-                    Karel.move();
-                }
-             Karel.turnLeft();
-             Karel.turnLeft();
+            while (Karel.frontIsClear()) {
+                Karel.move();
             }
-            }
-
+            Karel.turnLeft();
+            Karel.turnLeft();
         }
-
-
+    }
+}
