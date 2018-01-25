@@ -29,17 +29,18 @@ public class Game extends JComponent {
     static final int HEIGHT = 600;
     //Title of the window
     String title = "Rave my dude";
-    // sets the framerate and delay for our game
-    // you just need to select an approproate framerate
+
+    //Set up lower FPS for blockier movement
     long desiredFPS = 16;
     long desiredTime = (1000) / desiredFPS;
     // YOUR GAME VARIABLES WOULD GO HERE
-    //Create the players
+
+    //Create the player and direction movements
     Rectangle player = new Rectangle(40, 40, 20, 20);
     int playerDX = 0;
     int playerDY = 0;
-    //Blocks in the level
-    Rectangle[] blocks = new Rectangle[4];
+    //Create the borders array
+    Rectangle[] border = new Rectangle[4];
     //Create the controls variables
     boolean left = false;
     boolean right = false;
@@ -49,45 +50,38 @@ public class Game extends JComponent {
     Font biggerFont = new Font("arial", Font.BOLD, 42);
     //Create font for point counter
     Font pointCount = new Font("sec", Font.ITALIC, 15);
-    //Create variable for loss
+    //Create variable for loss (to stop from displaying 'loss' msg at start
     int lose = 0;
-    //Create random spawns for X and Y shots on the border
+    //Create pahse 1 random spawns for X and Y shots on the border
     int ballXSpawn = (int) (Math.random() * WIDTH);
     int ballYSpawn = (int) (Math.random() * HEIGHT);
-    //Create variables for the X and Y projectiles
+    //Create variables for the X and Y projectile speed + size
     int shotX = 20;
     int shotY = 24;
+    //Create the rectangles for the projectiles
     Rectangle projectileX = new Rectangle(ballXSpawn, 0, shotX, shotX);
     Rectangle projectileY = new Rectangle(0, ballYSpawn, shotX, shotX);
-    boolean shotMoveDown = false;
-    boolean shotMoveRight = false;
-    //Create shot speeds
-    int shotXSpeed = 20;
-    int shotYSpeed = 20;
-    //Create directional int
-    int shotYD = 1;
-    int shotXD = 1;
-    //Create level numbers
+    //Create level numbers (start at 2 to avoid level loop problem)
     int level = 2;
-    //Create phase 2 starting boolean and variables
+    
+    //Create phase 2, copied phase 1 w/ new variables
     int shot2Y = -20;
     int shot2X = -20;
-    boolean level2 = false;
     int ball2XSpawn = (int) (Math.random() * 800);
     int ball2YSpawn = (int) (Math.random() * 600);
+    //Put projectiles away and out of distance from screen for later use (avoid random collision error)
     int heightProjectile = -40;
     int widthProjectile = -40;
+    //Create phase 2 rectangles
     Rectangle projectile2X = new Rectangle(ball2XSpawn, heightProjectile / 2 - shot2Y / 2, shotX, shotX);
     Rectangle projectile2Y = new Rectangle(widthProjectile / 2 - shot2X / 2, ball2YSpawn, shotX, shotX);
-    //Repeat for phase 3
+    //Repeat phase 2 for phase 3
     int shot3Y = -20;
     int shot3X = -20;
     int ball3XSpawn = (int) (Math.random() * WIDTH);
     int ball3YSpawn = (int) (Math.random() * HEIGHT);
-    
     Rectangle projectile3X = new Rectangle(ball3XSpawn, heightProjectile / 2 - shot3Y / 2, shotX, shotX);
     Rectangle projectile3Y = new Rectangle(widthProjectile / 2 - shot3X / 2, ball3YSpawn, shotX, shotX);
-
     //Create point counter
     int points = 0;
     //Create controls allowed before loss
@@ -131,10 +125,10 @@ public class Game extends JComponent {
 
         // GAME DRAWING GOES HERE
 
-        //Create the array for borders
+        //Fill the border rectangle array
         g.setColor(Color.BLACK);
-        for (int i = 0; i < blocks.length; i++) {
-            g.fillRect(blocks[i].x, blocks[i].y, blocks[i].width, blocks[i].height);
+        for (int i = 0; i < border.length; i++) {
+            g.fillRect(border[i].x, border[i].y, border[i].width, border[i].height);
         }
         //Create the player cube
         g.setColor(Color.RED);
@@ -147,13 +141,13 @@ public class Game extends JComponent {
         g.fillRect(projectileX.x, projectileX.y, projectileX.width, projectileX.height);
 
         //Repeat for second phase shots
-        if (level >= 6) {
+        if (level >= 5) {
             g.setColor(Color.BLUE);
             g.fillRect(0, projectile2Y.y, projectile2Y.width, projectile2Y.height);
             g.fillRect(projectile2X.x, 0, projectile2X.width, projectile2X.height);
         }
         //Repeat for third phase shots
-        if (level >= 10) {
+        if (level >= 7) {
             g.setColor(Color.GREEN);
             g.fillRect(0, projectile3Y.y, projectile3Y.width, projectile3Y.height);
             g.fillRect(projectile3X.x, 0, projectile3X.width, projectile3X.height);
@@ -169,13 +163,14 @@ public class Game extends JComponent {
             g.setFont(biggerFont);
             g.drawString("You lose!", 300, 300);
         }
+        //Create the level message notifier
         if (shotX == 50) {
             g.setColor(Color.GREEN);
             g.setFont(biggerFont);
             g.drawString("Level " + level + "!", 300, 300);
         }
 
-        //Create point counter
+        //Create a point counter over the player
         g.setColor(Color.BLACK);
         g.setFont(pointCount);
         g.drawString("Points: " + points, player.x - 12, player.y + 2);
@@ -189,10 +184,10 @@ public class Game extends JComponent {
         // Any of your pre setup before the loop starts should go here
 
         //Set up the snake's borders
-        blocks[0] = new Rectangle(0, 580, WIDTH, 40);
-        blocks[1] = new Rectangle(0, -20, WIDTH, 40);
-        blocks[2] = new Rectangle(780, 0, 40, HEIGHT);
-        blocks[3] = new Rectangle(-20, 0, 40, HEIGHT);
+        border[0] = new Rectangle(0, 580, WIDTH, 40);
+        border[1] = new Rectangle(0, -20, WIDTH, 40);
+        border[2] = new Rectangle(780, 0, 40, HEIGHT);
+        border[3] = new Rectangle(-20, 0, 40, HEIGHT);
     }
 
     // The main game loop
@@ -216,7 +211,7 @@ public class Game extends JComponent {
             // GAME LOGIC STARTS HERE
 
 
-            //Create movement for the player
+            //Create movement directions and speed for the player
             if (right == true) {
                 playerDX = 10;
                 playerDY = 0;
@@ -274,7 +269,7 @@ public class Game extends JComponent {
                     }
                     projectile2X.height = shot2X;
                 }
-                if (level >= 8) {
+                if (level >= 7) {
                     projectile3X.height = projectile3X.height + shot3X;
                     projectile3Y.width = projectile3Y.width + shot3Y;
                     if (projectile3Y.width > WIDTH) {
@@ -297,13 +292,13 @@ public class Game extends JComponent {
                 }
             }
             //Raise shots X and Y of phase two into play
-            if (level >= 6) {
+            if (level >= 5) {
                 shot2Y = 26;
                 shot2X = 22;
                 heightProjectile = 800;
             }
-            //Rase shots X and Y of phase three into play
-            if (level >= 11) {
+            //Raise shots X and Y of phase three into play
+            if (level >= 7) {
                 shot3Y = 28;
                 shot3X = 24;
                 widthProjectile = 600;
@@ -324,7 +319,7 @@ public class Game extends JComponent {
             player.x = player.x + playerDX;
             player.y = player.y + playerDY;
 
-            //If player intersects projectiles of the first phase, loss
+            //If player intersects projectiles of the first phase, push loss
             if (player.intersects(projectileX) || player.intersects(projectileY) ||
                     player.intersects(projectile2X) || player.intersects(projectile2Y) ||
                     player.intersects(projectile3X) || player.intersects(projectile3Y)) {
