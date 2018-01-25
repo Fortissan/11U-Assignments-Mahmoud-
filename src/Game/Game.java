@@ -28,7 +28,7 @@ public class Game extends JComponent {
     static final int WIDTH = 800;
     static final int HEIGHT = 600;
     //Title of the window
-    String title = "Rave my dude";
+    String title = "Hotshot";
 
     //Set up lower FPS for blockier movement
     long desiredFPS = 16;
